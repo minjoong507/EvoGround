@@ -1,5 +1,5 @@
 # EvoGround: Self-Evolving Video Agents for Video Temporal Grounding
-[![arXiv](https://img.shields.io/badge/arXiv-2411.12951-b31b1b.svg)](http://arxiv.org/abs/2605.13803)
+[![arXiv](https://img.shields.io/badge/arXiv-2605.13803-b31b1b.svg)](http://arxiv.org/abs/2605.13803)
 <a href='https://huggingface.co/mjjung/EvoGround_Proposer'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Proposer-blue'></a>
 <a href='https://huggingface.co/mjjung/EvoGround'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Solver-blue'></a>
 
