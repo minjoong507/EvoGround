@@ -1,0 +1,40 @@
+timer1:
+  anno_path: dataset/timer1/annotations/train_2k5.json
+  test_path: dataset/timer1/annotations/train_2k5.json
+  video_folder: ./
+
+charades:
+  anno_path: dataset/charades/charades_train_list.json
+  test_path: dataset/charades/charades_test.json
+  video_folder: video_datasets/charades/
+
+activitynet:
+  test_path: dataset/activitynet/activitynet_test.json
+  video_folder: video_datasets/ActivityNet
+
+tvgbench:
+  test_path: dataset/tvgbench/tvgbench.json
+  video_folder: ./
+
+activitynet_dvc:
+  test_path: dataset/activitynet/val_1.json
+  video_folder: video_datasets/ActivityNet
+
+TemporalBench:
+  test_path: dataset/temporalbench/temporalbench_short_caption.json
+
+etbenchTG:
+  test_path: dataset/ETBench/etbench_vid_v1.0.json
+  video_folder: video_datasets/ETBench/videos
+
+videomme:
+  test_path: video_datasets/Video-MME/videomme
+  video_folder: video_datasets/Video-MME/data
+
+tempcompass:
+  test_path: video_datasets/TempCompass
+  video_folder: video_datasets/TempCompass/videos
+
+rextimeTG:
+  test_path: video_datasets/ReXTime/data
+  video_folder: video_datasets

@@ -3,11 +3,15 @@
 <a href='https://huggingface.co/mjjung/EvoGround_Proposer'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Proposer-blue'></a>
 <a href='https://huggingface.co/mjjung/EvoGround'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Solver-blue'></a>
 
-![image](assets/teaser.jpg)
+![image](assets/teaser.png)
 
 EvoGround is a framework of two coupled self-evolving agents, a *proposer* and a *solver*, that learn temporal grounding from raw videos without any human-labeled data.
 The proposer generates query-moment pairs from raw videos, while the solver learns to ground them and provides feedback that improves the proposer in return.
 Through this self-reinforcing loop, driven entirely by reinforcement learning, the two agents mutually improve each other across iterations.
+
+## News
+- **[2026.05.18]** We release the inference and evaluation code.
+- **[2026.05.13]** We initially release the checkpoints of EvoGround.
 
 ## Installation
 
