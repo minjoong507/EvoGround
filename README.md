@@ -10,8 +10,8 @@ The proposer generates query-moment pairs from raw videos, while the solver lear
 Through this self-reinforcing loop, driven entirely by reinforcement learning, the two agents mutually improve each other across iterations.
 
 ## News
-- **[2026.05.18]** We release the inference and evaluation code.
-- **[2026.05.13]** We initially release the checkpoints of EvoGround.
+- **[2026.July]** We release the full training code.
+- **[2026.May]** We release the checkpoints and evaluation code.
 
 ## Installation
 
@@ -54,6 +54,7 @@ Train the proposer from the base model using format reward only, then train the 
 
 ```bash
 bash scripts/proposer/iter1.sh
+bash scripts/data_generation/gen_data.sh   # generate data with Iter1 proposer
 bash scripts/solver/iter1.sh
 ```
 
@@ -62,10 +63,14 @@ bash scripts/solver/iter1.sh
 From iteration 2 onward, the proposer uses the trained solver for feedback (GDPO), and the solver is trained on proposer-generated data.
 
 ```bash
+# Iteration 2
 bash scripts/proposer/iter2.sh
+bash scripts/data_generation/gen_data.sh   # generate data with Iter2 proposer
 bash scripts/solver/iter2.sh
 
+# Iteration 3
 bash scripts/proposer/iter3.sh
+bash scripts/data_generation/gen_data.sh   # generate data with Iter3 proposer
 bash scripts/solver/iter3.sh
 ```
 
@@ -96,13 +101,68 @@ bash scripts/solver/iter3.sh
 --prompt_type v1                                  # Solver prompt template
 ```
 
+## Data Generation
+
+After training the proposer, run it on the training videos to generate pseudo-labeled data for the solver. The script shards the dataset across GPUs and merges outputs automatically:
+
+```bash
+bash scripts/data_generation/gen_data.sh
+```
+
+### Manual Command
+
+```bash
+GPU_LIST="0,1,2,3"
+EXP_ID="EvoGround_Proposer"
+dataset=timer1
+
+IFS=',' read -ra gpus <<< "$GPU_LIST"
+num_gpus=${#gpus[@]}
+
+for ((i=0; i<num_gpus; i++)); do
+    gpu=${gpus[i]}
+    PYTHONPATH=$PYTHONPATH:. CUDA_VISIBLE_DEVICES=$gpu python src/gen_data.py \
+        --model_base checkpoints/Proposer/$EXP_ID \
+        --batch_size 8 \
+        --curr_idx $i \
+        --total_idx $num_gpus \
+        --max_new_tokens 512 \
+        --split test \
+        --datasets $dataset \
+        --prompt_type v2 \
+        --max_windows 4 \
+        --output_dir gen_data/$EXP_ID/$dataset \
+        --use_vllm_inference &
+done
+wait
+
+# Merge sharded outputs into a single file
+PYTHONPATH=$PYTHONPATH:. python src/postprocess_gen_data.py \
+    --gen_dataset_path gen_data/$EXP_ID/$dataset \
+    --dataset $dataset
+```
+
+### Key Data Generation Arguments
+
+| Argument | Default | Description |
+|---|---|---|
+| `--model_base` | — | Path to trained proposer checkpoint |
+| `--datasets` | `timer1` | Dataset name (must be in `dataset/config.yaml`) |
+| `--max_windows` | `4` | Number of moment proposals per video |
+| `--prompt_type` | `v2` | Proposer prompt template (`v2` or `v3`) |
+| `--num_generations` | `1` | Candidate generations per video (>1 enables diversity-based selection) |
+| `--temperature` | `0.7` | Sampling temperature; must be >0 when `num_generations>1` |
+| `--curr_idx` / `--total_idx` | `0` / `1` | Shard index / total shards for multi-GPU parallelism |
+
+Generated data is saved to `gen_data/{EXP_ID}/{dataset}/gen_data.json`.
+
 ## Evaluation
 
 ```bash
 bash scripts/test.sh
 ```
 
-Results are saved as JSONL files under `outputs/eval/{model_id}/{dataset}/`.
+Results are saved as JSONL files under `outputWs/eval/{model_id}/{dataset}/`.
 
 ### Manual Evaluation
 
@@ -154,6 +214,17 @@ Trained checkpoints are saved to:
 - `checkpoints/Proposer/Qwen2.5-VL-7B-Proposer-Iter{N}/` — Proposer checkpoint per iteration
 - `checkpoints/Solver/Qwen2.5-VL-7B-Solver-Iter{N}/` — Solver checkpoint per iteration
 - `gen_data/Iter{N}/{dataset}/gen_data.json` — Proposer-generated training data per iteration
+
+## Citation
+If you find our work useful, please cite:
+```aiignore
+@article{jung2026evoground,
+  title={EvoGround: Self-Evolving Video Agents for Video Temporal Grounding},
+  author={Jung, Minjoon and Zhang, Byoung-Tak and Torresani, Lorenzo},
+  journal={arXiv preprint arXiv:2605.13803},
+  year={2026}
+}
+```
 
 ## Acknowledgement
 
