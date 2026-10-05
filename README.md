@@ -10,6 +10,7 @@ The proposer generates query-moment pairs from raw videos, while the solver lear
 Through this self-reinforcing loop, driven entirely by reinforcement learning, the two agents mutually improve each other across iterations.
 
 ## News
+- **[2026.Sep]** EvoGround has been accepted to NeurIPS 2026.
 - **[2026.July]** We release the full training code.
 - **[2026.May]** We release the checkpoints and evaluation code.
 
